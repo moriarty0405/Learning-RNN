@@ -1,6 +1,6 @@
-# Toy code for learning RNN and LSTM
+# Toy code for learning RNN and LSTM with python 2.7
 
-### 1. Vanilla RNN: implementation of Vanilla RNN with python 2.x
+### 1. Vanilla RNN: implementation of Vanilla RNN
 
 #### Major reference
 1.  [Rohan & Lenny #3: Recurrent Neural Networks & LSTMs](https://ayearofai.com/rohan-lenny-3-recurrent-neural-networks-10300100899b)
@@ -11,3 +11,5 @@
 1.  [Rohan & Lenny #3: Recurrent Neural Networks & LSTMs](https://ayearofai.com/rohan-lenny-3-recurrent-neural-networks-10300100899b)
 2.  [Simple LSTM](http://nicodjimenez.github.io/2014/08/08/lstm.html)
 3.  [A Critical Review of Recurrent Neural Networks for Sequence Learning](https://arxiv.org/abs/1506.00019)
+
+### 3. RNN and LSTM with TensorFlow (TODO)
