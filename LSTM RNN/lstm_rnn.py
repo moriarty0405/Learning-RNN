@@ -22,12 +22,12 @@ class LstmParam:
         self.mem_cell_ct = mem_cell_ct
         self.x_dim = x_dim
         concat_len = x_dim + mem_cell_ct
-        # weight matrices
+        # weight matrices (init with random variables)
         self.wg = rand_arr(-0.1, 0.1, mem_cell_ct, concat_len)
         self.wi = rand_arr(-0.1, 0.1, mem_cell_ct, concat_len)
         self.wf = rand_arr(-0.1, 0.1, mem_cell_ct, concat_len)
         self.wo = rand_arr(-0.1, 0.1, mem_cell_ct, concat_len)
-        # bias terms
+        # bias terms (init with random variables)
         self.bg = rand_arr(-0.1, 0.1, mem_cell_ct)
         self.bi = rand_arr(-0.1, 0.1, mem_cell_ct)
         self.bf = rand_arr(-0.1, 0.1, mem_cell_ct)
@@ -62,7 +62,7 @@ class LstmParam:
         self.bo_diff = np.zeros_like(self.bo)
 
 class LstmState:
-    def __init__(self, mem_cell_ct, x_dim):
+    def __init__(self, mem_cell_ct):
         self.g = np.zeros(mem_cell_ct)
         self.i = np.zeros(mem_cell_ct)
         self.f = np.zeros(mem_cell_ct)
@@ -80,6 +80,7 @@ class LstmNode:
         # non-recurrent input concatenated with recurrent input
         self.xc = None
 
+    # Forward propagation
     def bottom_data_is(self, x, s_prev=None, h_prev=None):
         # if this is the first lstm node in the network
         if s_prev == None: s_prev = np.zeros_like(self.state.s)
@@ -99,6 +100,7 @@ class LstmNode:
 
         self.xc = xc
 
+    # Backward propagation through time
     def top_diff_is(self, top_diff_h, top_diff_s):
         # notice that top_diff_s is carried along the constant error carousel
         ds = self.state.o * top_diff_h + top_diff_s
@@ -158,7 +160,7 @@ class LstmNetwork():
         self.lstm_node_list[idx].top_diff_is(diff_h, diff_s)
         idx -= 1
 
-        ### ... following nodes also get diffs from next nodes, hence we add diffs to diff_h
+        ### following nodes also get diffs from next nodes, hence we add diffs to diff_h
         ### we also propagate error along constant error carousel using diff_s
         while idx >= 0:
             loss += loss_layer.loss(self.lstm_node_list[idx].state.h, y_list[idx])
@@ -177,7 +179,7 @@ class LstmNetwork():
         self.x_list.append(x)
         if len(self.x_list) > len(self.lstm_node_list):
             # need to add new lstm node, create new state mem
-            lstm_state = LstmState(self.lstm_param.mem_cell_ct, self.lstm_param.x_dim)
+            lstm_state = LstmState(self.lstm_param.mem_cell_ct)
             self.lstm_node_list.append(LstmNode(self.lstm_param, lstm_state))
 
         # get index of most recent x input
