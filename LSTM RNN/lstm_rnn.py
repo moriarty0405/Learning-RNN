@@ -67,7 +67,7 @@ class LstmState:
         self.i = np.zeros(mem_cell_ct)
         self.f = np.zeros(mem_cell_ct)
         self.o = np.zeros(mem_cell_ct)
-        self.s = np.zeros(mem_cell_ct)
+        self.s = np.zeros(mem_cell_ct) # cell state
         self.h = np.zeros(mem_cell_ct)
         self.bottom_diff_h = np.zeros_like(self.h)
         self.bottom_diff_s = np.zeros_like(self.s)
@@ -102,7 +102,7 @@ class LstmNode:
 
     # Backward propagation through time
     def top_diff_is(self, top_diff_h, top_diff_s):
-        # notice that top_diff_s is carried along the constant error carousel
+        # notice that top_diff_s is carried along the constant error carousel (CEC)
         ds = self.state.o * top_diff_h + top_diff_s
         do = self.state.s * top_diff_h
         di = self.state.g * ds
@@ -147,7 +147,8 @@ class LstmNetwork():
         """
         Updates diffs by setting target sequence
         with corresponding loss layer.
-        Will *NOT* update parameters.  To update parameters,
+        Will *NOT* update parameters.
+        To update parameters,
         call self.lstm_param.apply_diff()
         """
         assert len(y_list) == len(self.x_list)
@@ -162,6 +163,7 @@ class LstmNetwork():
 
         ### following nodes also get diffs from next nodes, hence we add diffs to diff_h
         ### we also propagate error along constant error carousel using diff_s
+        ### derivative of one cell state w.r.t. the previous is 1.0 (CEC)
         while idx >= 0:
             loss += loss_layer.loss(self.lstm_node_list[idx].state.h, y_list[idx])
             diff_h = loss_layer.bottom_diff(self.lstm_node_list[idx].state.h, y_list[idx])
