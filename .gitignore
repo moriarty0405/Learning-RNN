@@ -99,3 +99,6 @@ ENV/
 .idea/modules.xml
 TF_RNN/.idea/TF_RNN.iml
 .idea/workspace.xml
+.idea/misc.xml
+.idea/workspace.xml
+.idea/misc.xml

@@ -67,15 +67,18 @@ W2 = tf.Variable(np.random.rand(state_size, num_classes),dtype=tf.float32)
 b2 = tf.Variable(np.zeros((1,num_classes)), dtype=tf.float32)
 
 # Unpack columns (unpacking the columns of the batch into a Python list)
-inputs_series = tf.unpack(batchX_placeholder, axis=1)
-labels_series = tf.unpack(batchY_placeholder, axis=1)
+# unpack change to unstack
+inputs_series = tf.unstack(batchX_placeholder, axis=1)
+labels_series = tf.unstack(batchY_placeholder, axis=1)
 
 # Forward pass
 current_state = init_state
 states_series = []
 for current_input in inputs_series:
     current_input = tf.reshape(current_input, [batch_size, 1])
-    input_and_state_concatenated = tf.concat(1, [current_input, current_state])  # Increasing number of columns
+
+    # Change the parameters for tf.concat
+    input_and_state_concatenated = tf.concat([current_input, current_state], 1)  # Increasing number of columns
 
     # current_input * Wa + current_state * Wb + b
     next_state = tf.tanh(tf.matmul(input_and_state_concatenated, W) + b)  # Broadcasted addition
@@ -89,7 +92,8 @@ logits_series = [tf.matmul(state, W2) + b2 for state in states_series] #Broadcas
 predictions_series = [tf.nn.softmax(logits) for logits in logits_series]
 
 # sparse_softmax_cross_entropy_with_logits calculates the softmax and the cross-entropy
-losses = [tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels) for logits, labels in zip(logits_series,labels_series)]
+# changed function parameters
+losses = [tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels) for logits, labels in zip(logits_series,labels_series)]
 total_loss = tf.reduce_mean(losses)
 
 # Adagrad algorithm to train
@@ -113,11 +117,13 @@ with tf.Session() as sess:
             start_idx = batch_idx * truncated_backprop_length
             end_idx = start_idx + truncated_backprop_length
 
+            # Slice the input data and label
             batchX = x[:,start_idx:end_idx]
             batchY = y[:,start_idx:end_idx]
 
             _total_loss, _train_step, _current_state, _predictions_series = sess.run(
                 [total_loss, train_step, current_state, predictions_series],
+                # Feed varaibles for each batch from inputting stage
                 feed_dict={
                     batchX_placeholder:batchX,
                     batchY_placeholder:batchY,
