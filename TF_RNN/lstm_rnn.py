@@ -63,8 +63,8 @@ hidden_state = tf.placeholder(tf.float32, [batch_size, state_size])
 init_state = tf.nn.rnn_cell.LSTMStateTuple(cell_state, hidden_state)
 
 # Weights and biases, they could be updated across runs
-W = tf.Variable(np.random.rand(state_size+1, state_size), dtype=tf.float32)
-b = tf.Variable(np.zeros((1,state_size)), dtype=tf.float32)
+#W = tf.Variable(np.random.rand(state_size+1, state_size), dtype=tf.float32)
+#b = tf.Variable(np.zeros((1,state_size)), dtype=tf.float32)
 
 W2 = tf.Variable(np.random.rand(state_size, num_classes),dtype=tf.float32)
 b2 = tf.Variable(np.zeros((1,num_classes)), dtype=tf.float32)
