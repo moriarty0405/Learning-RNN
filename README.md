@@ -17,3 +17,4 @@
 1.  [How to build a Recurrent Neural Network in TensorFlow](https://medium.com/@erikhallstrm/hello-world-rnn-83cd7105b767)
 2.  [Sequence Modelling: Recurrent and Recursive Nets](http://www.deeplearningbook.org/contents/rnn.html)
 3.  [TensorFlow Mechanics 101](https://www.tensorflow.org/get_started/mnist/mechanics)
+4. [Recurrent Neural Networks](https://www.tensorflow.org/tutorials/recurrent)
